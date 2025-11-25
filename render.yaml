@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: school-chat
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: MONGODB_URI
+        value: mongodb+srv://schoolchat_user:tukubhuyan123@cluster0.i386mxq.mongodb.net/?appName=Cluster0
