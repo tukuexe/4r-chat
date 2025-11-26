@@ -1,9 +1,55 @@
 services:
   - type: web
-    name: school-chat
+    name: chatshpere
     env: node
+    plan: free
+    region: ohio  # or singapore, frankfurt, oregon
+    branch: main
+    
+    # Build Settings
     buildCommand: npm install
     startCommand: node server.js
+    
+    # Environment Variables
     envVars:
-      - key: MONGODB_URI
-        value: mongodb+srv://schoolchat_user:tukubhuyan123@cluster0.i386mxq.mongodb.net/?appName=Cluster0
+      - key: NODE_ENV
+        value: production
+      - key: BOT_TOKEN
+        sync: false
+      - key: CHAT_ID  
+        sync: false
+    
+    # Health Check Path
+    healthCheckPath: /health
+    
+    # Auto-Deploy
+    autoDeploy: true
+    
+    # Advanced Options
+    rootDir: ./
+    
+    # Build Filter (optional)
+    buildFilter:
+      paths:
+        - server.js
+        - package.json
+        - public/**
+        - render.yaml
+    
+    # Headers for security
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+    
+    # CORS (already handled in code, but good for documentation)
+    cors:
+      allowedOrigins:
+        - https://fourr-chat.onrender.com
+      allowCredentials: true
