@@ -1,349 +1,214 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>School Group Chat</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            max-width: 800px;
-            margin: 0 auto;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .screen {
-            display: none;
-            flex: 1;
-            flex-direction: column;
-        }
-        .active {
-            display: flex;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #333;
-        }
-        input, textarea, button {
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-        button {
-            background: #667eea;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        button:hover {
-            background: #5a6fd8;
-        }
-        #messages {
-            flex: 1;
-            overflow-y: auto;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            background: #fafafa;
-        }
-        .message {
-            background: white;
-            padding: 12px;
-            border-radius: 8px;
-            margin: 8px 0;
-            border-left: 4px solid #667eea;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .message-header {
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 5px;
-        }
-        .message-time {
-            font-size: 12px;
-            color: #888;
-            float: right;
-        }
-        .status {
-            text-align: center;
-            color: #666;
-            font-size: 14px;
-            margin: 10px 0;
-        }
-        .input-area {
-            display: flex;
-            gap: 10px;
-        }
-        .input-area textarea {
-            flex: 1;
-        }
-        .info {
-            background: #e7f3ff;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            font-size: 14px;
-        }
-        .loading {
-            text-align: center;
-            color: #666;
-            font-style: italic;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatSphere - Modern School Chat</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <!-- Name Screen -->
-        <div id="nameScreen" class="screen active">
-            <h1>🏫 School Group Chat</h1>
-            <div class="info">
-                <strong>Welcome to our school chat!</strong><br>
-                • Enter your name to join<br>
-                • See all previous messages<br>
-                • Chat with everyone in real-time<br>
-                • Messages are saved permanently
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="logo-animation">
+                <div class="logo-bubble">
+                    <div class="orbit-dots">
+                        <div class="dot dot-1"></div>
+                        <div class="dot dot-2"></div>
+                        <div class="dot dot-3"></div>
+                    </div>
+                    <div class="bubble-core"></div>
+                </div>
             </div>
-            <input type="text" id="nameInput" placeholder="Enter your full name" maxlength="50">
-            <button onclick="startChat()">Join Chat →</button>
-        </div>
-
-        <!-- Chat Screen -->
-        <div id="chatScreen" class="screen">
-            <h1>💬 School Chat - <span id="userNameDisplay"></span></h1>
-            <div class="info">
-                💡 <strong>Live Updates:</strong> New messages appear automatically every 3 seconds
+            <h1 class="app-title">ChatSphere</h1>
+            <p class="app-tagline">Connecting minds, sharing ideas</p>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
             </div>
-            
-            <div id="messages">
-                <div class="loading">Loading messages...</div>
-            </div>
-
-            <div class="input-area">
-                <textarea id="messageInput" placeholder="Type your message to the whole school..." rows="2"></textarea>
-                <button onclick="sendMessage()" style="width: 100px;">Send</button>
-            </div>
-            
-            <div class="status" id="status"></div>
-            <button onclick="resetChat()" style="background: #6c757d;">Change Name</button>
         </div>
     </div>
 
-    <script>
-    const BACKEND_URL = window.location.origin;
-    let userName = '';
-    let refreshInterval;
-
-    async function startChat() {
-        userName = document.getElementById('nameInput').value.trim();
-        
-        if (!userName) {
-            alert('Please enter your name!');
-            return;
-        }
-
-        document.getElementById('userNameDisplay').textContent = userName;
-        showScreen('chatScreen');
-        
-        // Load message history
-        await loadMessages();
-        
-        // Start auto-refresh every 3 seconds
-        refreshInterval = setInterval(loadMessages, 3000);
-    }
-
-    function resetChat() {
-        userName = '';
-        document.getElementById('nameInput').value = '';
-        document.getElementById('messageInput').value = '';
-        if (refreshInterval) {
-            clearInterval(refreshInterval);
-        }
-        showScreen('nameScreen');
-    }
-
-    async function loadMessages() {
-        try {
-            const response = await fetch(`${BACKEND_URL}/messages`);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const messages = await response.json();
-            
-            const messagesDiv = document.getElementById('messages');
-            
-            if (messages.length === 0) {
-                messagesDiv.innerHTML = '<div class="message">🎉 No messages yet. Be the first to send one!</div>';
-                return;
-            }
-            
-            let html = '';
-            messages.forEach(msg => {
-                const time = new Date(msg.timestamp).toLocaleTimeString();
-                const date = new Date(msg.timestamp).toLocaleDateString();
-                html += `
-                    <div class="message">
-                        <div class="message-header">
-                            👤 ${msg.name}
-                            <span class="message-time">${date} ${time}</span>
-                        </div>
-                        <div>${escapeHtml(msg.message)}</div>
-                    </div>
-                `;
-            });
-            
-            messagesDiv.innerHTML = html;
-            
-            // Auto-scroll to bottom
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            
-        } catch (error) {
-            console.error('Error loading messages:', error);
-            const messagesDiv = document.getElementById('messages');
-            messagesDiv.innerHTML = `
-                <div class="message" style="border-color: #ff6b6b;">
-                    ⚠️ <strong>Connection Issue</strong><br>
-                    <small>Still loading messages... (Auto-retry in 3 seconds)</small>
+    <!-- Auth Screen -->
+    <div id="authScreen" class="screen auth-screen">
+        <div class="auth-container">
+            <div class="auth-header">
+                <div class="logo">
+                    <div class="logo-icon">💬</div>
+                    <h1>ChatSphere</h1>
                 </div>
-            `;
-        }
-    }
-
-    async function sendMessage() {
-        const messageInput = document.getElementById('messageInput');
-        const message = messageInput.value.trim();
-        const status = document.getElementById('status');
-
-        if (!message) {
-            alert('Please enter a message!');
-            return;
-        }
-
-        // Add message to chat immediately (optimistic update)
-        const messagesDiv = document.getElementById('messages');
-        const tempMessage = document.createElement('div');
-        tempMessage.className = 'message';
-        tempMessage.style.opacity = '0.7';
-        tempMessage.innerHTML = `
-            <div class="message-header">
-                👤 ${userName}
-                <span class="message-time">Sending...</span>
+                <p class="auth-subtitle">Join your school community</p>
             </div>
-            <div>${escapeHtml(message)}</div>
-        `;
-        messagesDiv.appendChild(tempMessage);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-        status.textContent = 'Sending...';
-        messageInput.disabled = true;
-
-        try {
-            const response = await fetch(`${BACKEND_URL}/send-message`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: userName,
-                    message: message
-                })
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                status.textContent = '✅ Message sent!';
-                messageInput.value = '';
-                
-                // Remove temporary message and reload all messages
-                tempMessage.remove();
-                await loadMessages();
-                
-                setTimeout(() => status.textContent = '', 2000);
-            } else {
-                status.textContent = '❌ Failed to send';
-                tempMessage.style.borderColor = 'red';
-                tempMessage.innerHTML = `
-                    <div class="message-header">
-                        👤 ${userName}
-                        <span class="message-time">Failed to send</span>
-                    </div>
-                    <div>${escapeHtml(message)}</div>
-                `;
-            }
-        } catch (error) {
-            status.textContent = '❌ Network error';
-            tempMessage.style.borderColor = 'red';
-            tempMessage.innerHTML = `
-                <div class="message-header">
-                    👤 ${userName}
-                    <span class="message-time">Failed - check connection</span>
+            <div class="auth-form">
+                <div class="input-group">
+                    <label for="nameInput">Your Name</label>
+                    <input type="text" id="nameInput" placeholder="Enter your display name" maxlength="20" class="glow-input">
+                    <div class="input-helper">This name will be visible to everyone</div>
                 </div>
-                <div>${escapeHtml(message)}</div>
-            `;
-        } finally {
-            messageInput.disabled = false;
-            messageInput.focus();
-        }
-    }
 
-    function showScreen(screenId) {
-        document.querySelectorAll('.screen').forEach(screen => {
-            screen.classList.remove('active');
-        });
-        document.getElementById(screenId).classList.add('active');
-    }
+                <div id="adminPasswordGroup" class="input-group hidden">
+                    <label for="adminPassword">Admin Password</label>
+                    <input type="password" id="adminPassword" placeholder="Enter admin password" class="glow-input">
+                    <div class="input-helper">Administrator access required</div>
+                </div>
 
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
+                <button id="continueBtn" class="btn-primary magnetic-btn">
+                    <span class="btn-content">
+                        <span class="btn-text">Continue to Chat</span>
+                        <span class="btn-arrow">→</span>
+                    </span>
+                    <div class="btn-shine"></div>
+                </button>
+            </div>
 
-    // Allow sending with Enter key
-    document.getElementById('messageInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
-    });
+            <div class="auth-features">
+                <div class="feature">
+                    <div class="feature-icon">🔒</div>
+                    <div class="feature-text">Secure & Private</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-text">Real-time</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🎯</div>
+                    <div class="feature-text">School Focused</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    document.getElementById('nameInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            startChat();
-        }
-    });
+    <!-- Chat Screen -->
+    <div id="chatScreen" class="screen chat-screen hidden">
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="header-left">
+                <button id="backBtn" class="icon-btn back-btn">
+                    <span>←</span>
+                </button>
+                <div class="chat-info">
+                    <h2 class="chat-title">ChatSphere</h2>
+                    <div id="onlineStatus" class="online-status">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Connecting...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button id="themeToggle" class="icon-btn theme-toggle">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <div id="adminBadge" class="admin-badge hidden">
+                    <span class="admin-crown">👑</span>
+                    <span>Admin</span>
+                </div>
+            </div>
+        </div>
 
-    // Test connection on page load
-    window.addEventListener('load', async () => {
-        try {
-            const response = await fetch(`${BACKEND_URL}/health`);
-            if (response.ok) {
-                console.log('✅ Backend is reachable');
-            }
-        } catch (error) {
-            console.log('⚠️ Backend might be starting up...');
-        }
-    });
-    </script>
+        <!-- Messages Container -->
+        <div id="messagesContainer" class="messages-container">
+            <div id="messagesList" class="messages-list">
+                <!-- Messages will be loaded here -->
+            </div>
+
+            <!-- Typing Indicator -->
+            <div id="typingIndicator" class="typing-indicator hidden">
+                <div class="typing-avatar">💭</div>
+                <div class="typing-content">
+                    <div class="typing-text">Someone is typing</div>
+                    <div class="typing-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="chat-input-container">
+            <div class="input-wrapper">
+                <div class="input-inner">
+                    <textarea 
+                        id="messageInput" 
+                        placeholder="Type your message..." 
+                        rows="1"
+                        maxlength="500"
+                        class="message-textarea"
+                    ></textarea>
+                    <button id="sendBtn" class="send-btn magnetic-btn">
+                        <span class="send-icon">🚀</span>
+                        <div class="send-shine"></div>
+                    </button>
+                </div>
+                <div class="input-actions">
+                    <span id="charCount" class="char-count">0/500</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message Context Menu -->
+        <div id="contextMenu" class="context-menu hidden">
+            <div class="menu-content">
+                <button class="menu-item delete-item" data-action="delete">
+                    <span class="menu-icon">🗑️</span>
+                    <span class="menu-text">Delete Message</span>
+                </button>
+                <button class="menu-item block-item" data-action="block">
+                    <span class="menu-icon">🚫</span>
+                    <span class="menu-text">Block User</span>
+                </button>
+                <button class="menu-item cancel-item" data-action="cancel">
+                    <span class="menu-icon">✕</span>
+                    <span class="menu-text">Cancel</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Admin Password Modal -->
+        <div id="adminModal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Admin Authentication</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Administrator access requires password verification.</p>
+                    <input type="password" id="modalAdminPassword" placeholder="Enter admin password" class="modal-input">
+                    <div class="modal-actions">
+                        <button id="confirmAdmin" class="btn-primary">Verify & Continue</button>
+                        <button id="cancelAdmin" class="btn-secondary">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Blocked Screen -->
+    <div id="blockedScreen" class="screen blocked-screen hidden">
+        <div class="blocked-content">
+            <div class="blocked-icon">🚫</div>
+            <h2>Access Restricted</h2>
+            <p>Your access to ChatSphere has been restricted by the administrator.</p>
+            <div class="blocked-actions">
+                <button onclick="location.reload()" class="btn-secondary">Try Again</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Particles Background -->
+    <div class="particles-container">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
