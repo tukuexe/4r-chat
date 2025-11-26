@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 
 // ==================== CONFIGURATION ====================
 const CONFIG = {
-    ADMIN_PASSWORD: '$2a$10$8K1p/a0dRTlR0d.kU7L3u.ZqB0QY9QzJ9VQJ9VQJ9VQJ9VQJ9VQJ9V', // "admin123" hashed
+    ADMIN_PASSWORD: 'tukux2', // "admin123" hashed
     BOT_TOKEN: '8170582086:AAEb5LIj1flmUeeBlYQZaNm81lxufzA3Zyo', // Replace with your bot token
     CHAT_ID: '6142816761', // Replace with your chat ID
     MESSAGES_FILE: 'messages.json',
