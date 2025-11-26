@@ -1,42 +1,27 @@
 services:
   - type: web
-    name: chatshpere
+    name: fourr-chat
     env: node
     plan: free
-    region: ohio  # or singapore, frankfurt, oregon
+    region: ohio
     branch: main
     
     # Build Settings
     buildCommand: npm install
     startCommand: node server.js
     
-    # Environment Variables
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: BOT_TOKEN
-        sync: false
-      - key: CHAT_ID  
-        sync: false
-    
-    # Health Check Path
+    # Health Check
     healthCheckPath: /health
     
     # Auto-Deploy
     autoDeploy: true
     
-    # Advanced Options
-    rootDir: ./
+    # Environment Variables (Set these in Render Dashboard)
+    envVars:
+      - key: NODE_ENV
+        value: production
     
-    # Build Filter (optional)
-    buildFilter:
-      paths:
-        - server.js
-        - package.json
-        - public/**
-        - render.yaml
-    
-    # Headers for security
+    # Security Headers
     headers:
       - path: /*
         name: X-Frame-Options
@@ -48,7 +33,7 @@ services:
         name: Referrer-Policy
         value: strict-origin-when-cross-origin
     
-    # CORS (already handled in code, but good for documentation)
+    # CORS
     cors:
       allowedOrigins:
         - https://fourr-chat.onrender.com
