@@ -1,15 +1,15 @@
 {
-  "name": "school-chat-board",
+  "name": "chatshpere",
   "version": "1.0.0",
-  "description": "Public school chat with history",
+  "description": "Modern real-time school chat platform",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.18.2",
-    "node-telegram-bot-api": "^0.64.0",
     "cors": "^2.8.5",
-    "mongodb": "^5.8.0"
+    "node-telegram-bot-api": "^0.64.0",
+    "bcryptjs": "^2.4.3"
   }
 }
