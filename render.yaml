@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: fourr-chat
+    name: chatshpere-v3
     env: node
     plan: free
     region: ohio
@@ -12,14 +12,22 @@ services:
     
     # Health Check
     healthCheckPath: /health
+    initialDeployHook: true
     
     # Auto-Deploy
     autoDeploy: true
     
-    # Environment Variables (Set these in Render Dashboard)
+    # Environment Variables (Optional - everything is hardcoded)
     envVars:
       - key: NODE_ENV
         value: production
+      # Add these if you want to override hardcoded values:
+      # - key: MONGODB_URI
+      #   value: your_mongodb_uri_here
+      # - key: BOT_TOKEN
+      #   value: your_telegram_bot_token
+      # - key: JWT_SECRET
+      #   value: your_jwt_secret_here
     
     # Security Headers
     headers:
@@ -32,9 +40,57 @@ services:
       - path: /*
         name: Referrer-Policy
         value: strict-origin-when-cross-origin
+      - path: /*
+        name: X-XSS-Protection
+        value: 1; mode=block
     
-    # CORS
+    # CORS Settings
     cors:
       allowedOrigins:
+        - https://chatshpere-v3.onrender.com
         - https://fourr-chat.onrender.com
       allowCredentials: true
+      allowedMethods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+    
+    # Advanced Options
+    rootDir: ./
+    pullRequestPreviewsEnabled: false
+    
+    # Build Filter
+    buildFilter:
+      paths:
+        - server.js
+        - package.json
+        - public/**
+        - render.yaml
+    
+    # Disk (for file uploads - optional)
+    disk:
+      name: chatshpere-data
+      mountPath: /data
+      sizeGB: 1
+
+# ===== DATABASE (Optional - if you want separate MongoDB service) =====
+# databases:
+#   - name: chatshpere-mongodb
+#     plan: free
+#     databaseName: chatshpere
+#     ipAllowList:
+#       - source: 0.0.0.0/0
+#         description: everywhere
+
+# ===== CRON JOBS (Optional - for backups) =====
+# jobs:
+#   - type: cron
+#     name: daily-backup
+#     schedule: "0 0 * * *"
+#     startCommand: curl -X POST https://chatshpere-v3.onrender.com/admin/backup
+#     plan: free
