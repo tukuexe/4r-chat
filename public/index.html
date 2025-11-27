@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChatSphere - Modern School Chat</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#6366F1">
     <style>
         /* ===== CSS VARIABLES ===== */
         :root {
@@ -13,6 +15,7 @@
             --secondary: #10B981;
             --accent: #F59E0B;
             --danger: #EF4444;
+            --warning: #F59E0B;
             
             --bg-primary: #0F172A;
             --bg-secondary: #1E293B;
@@ -38,6 +41,9 @@
             
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --transition-fast: all 0.15s ease;
+
+            /* Custom Background - User can change */
+            --custom-bg: var(--bg-primary);
         }
 
         [data-theme="light"] {
@@ -49,6 +55,25 @@
             --text-muted: #64748B;
             --border-light: rgba(0,0,0,0.1);
             --border-medium: rgba(0,0,0,0.2);
+            --custom-bg: #FFFFFF;
+        }
+
+        /* Custom Background Classes */
+        .bg-gradient-cosmic {
+            --custom-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .bg-gradient-sunset {
+            --custom-bg: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .bg-gradient-ocean {
+            --custom-bg: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        .bg-gradient-forest {
+            --custom-bg: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        .bg-pattern-dots {
+            --custom-bg: radial-gradient(circle, var(--primary) 1px, transparent 1px);
+            background-size: 20px 20px;
         }
 
         /* ===== BASE STYLES ===== */
@@ -60,7 +85,7 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
+            background: var(--custom-bg);
             color: var(--text-primary);
             overflow: hidden;
             height: 100vh;
@@ -174,7 +199,7 @@
             animation: loading 2s ease-in-out infinite;
         }
 
-        /* ===== AUTH SCREEN ===== */
+        /* ===== AUTH SCREENS ===== */
         .auth-screen {
             background: var(--bg-gradient);
             display: flex;
@@ -223,6 +248,32 @@
         .auth-subtitle {
             color: rgba(255,255,255,0.8);
             font-size: 1rem;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius-lg);
+            padding: 0.25rem;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 0.75rem;
+            text-align: center;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            font-weight: 500;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .auth-tab.active {
+            background: rgba(255,255,255,0.2);
+            color: white;
         }
 
         .input-group {
@@ -340,7 +391,7 @@
 
         /* ===== CHAT SCREEN ===== */
         .chat-screen {
-            background: var(--bg-primary);
+            background: var(--custom-bg);
             z-index: 10;
         }
 
@@ -377,6 +428,11 @@
             background: var(--bg-surface);
         }
 
+        .chat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
         .chat-title {
             font-size: 1.25rem;
             font-weight: 600;
@@ -401,7 +457,7 @@
         .header-right {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.75rem;
         }
 
         .icon-btn {
@@ -413,11 +469,28 @@
             padding: 0.5rem;
             border-radius: var(--radius-md);
             transition: var(--transition);
+            position: relative;
         }
 
         .icon-btn:hover {
             background: var(--bg-surface);
             transform: scale(1.1);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: var(--danger);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 50%;
+            min-width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .admin-badge {
@@ -544,6 +617,19 @@
         .message-sender {
             font-weight: 600;
             font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-avatar {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
         }
 
         .message-time {
@@ -553,6 +639,115 @@
 
         .message-content {
             line-height: 1.4;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Reply System */
+        .message-reply {
+            background: rgba(255,255,255,0.1);
+            border-left: 3px solid var(--primary);
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        .reply-sender {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* File and Voice Messages */
+        .file-message, .voice-message {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius-md);
+            margin-top: 0.5rem;
+        }
+
+        .file-icon, .voice-icon {
+            font-size: 1.5rem;
+        }
+
+        .file-info, .voice-info {
+            flex: 1;
+        }
+
+        .file-name, .voice-duration {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-size, .voice-controls {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .voice-player {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .play-btn {
+            background: var(--primary);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .voice-waveform {
+            flex: 1;
+            height: 20px;
+            background: linear-gradient(90deg, var(--primary) 30%, rgba(99, 102, 241, 0.3) 70%);
+            border-radius: 10px;
+        }
+
+        /* Message Reactions */
+        .message-reactions {
+            display: flex;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .reaction {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .reaction:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .reaction.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .reaction-count {
+            font-size: 0.7rem;
+            opacity: 0.8;
         }
 
         /* ===== TYPING INDICATOR ===== */
@@ -654,6 +849,28 @@
             color: var(--text-muted);
         }
 
+        .input-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+        }
+
+        .action-btn:hover {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
         .send-btn {
             background: var(--primary);
             border: none;
@@ -680,15 +897,53 @@
             transform: none;
         }
 
-        .input-actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 0.5rem;
-        }
-
         .char-count {
             font-size: 0.75rem;
             color: var(--text-muted);
+        }
+
+        /* Voice Recording */
+        .voice-recorder {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+        }
+
+        .record-btn {
+            background: var(--danger);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .record-btn.recording {
+            animation: pulse 1s infinite;
+        }
+
+        .recording-timer {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--danger);
+        }
+
+        .recording-wave {
+            flex: 1;
+            height: 30px;
+            background: linear-gradient(90deg, transparent, var(--danger), transparent);
+            border-radius: 15px;
+            animation: wave 1s infinite;
         }
 
         /* ===== CONTEXT MENU ===== */
@@ -701,6 +956,7 @@
             z-index: 1000;
             animation: scaleIn 0.2s ease-out;
             backdrop-filter: blur(10px);
+            min-width: 200px;
         }
 
         .menu-content {
@@ -730,6 +986,10 @@
             color: var(--danger);
         }
 
+        .report-item {
+            color: var(--warning);
+        }
+
         .menu-icon {
             font-size: 1rem;
         }
@@ -755,7 +1015,9 @@
             border-radius: var(--radius-xl);
             padding: 0;
             width: 90%;
-            max-width: 400px;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
             animation: modalSlide 0.3s ease-out;
             border: 1px solid var(--border-light);
         }
@@ -839,6 +1101,206 @@
             border-color: var(--border-medium);
         }
 
+        /* ===== SIDEBARS ===== */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 100%;
+            max-width: 400px;
+            height: 100%;
+            background: var(--bg-surface);
+            border-left: 1px solid var(--border-light);
+            z-index: 100;
+            transition: var(--transition);
+            overflow-y: auto;
+        }
+
+        .sidebar.open {
+            right: 0;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar-content {
+            padding: 1.5rem;
+        }
+
+        /* Users List */
+        .users-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .user-item:hover {
+            background: var(--bg-secondary);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            background: var(--primary);
+            color: white;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-status {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .user-points {
+            background: var(--accent);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Profile Settings */
+        .profile-section {
+            margin-bottom: 2rem;
+        }
+
+        .profile-section h4 {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .avatar-option {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .avatar-option:hover {
+            transform: scale(1.1);
+        }
+
+        .avatar-option.selected {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .background-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .background-option {
+            height: 80px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .background-option:hover {
+            transform: scale(1.05);
+        }
+
+        .background-option.selected {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .background-option::after {
+            content: attr(data-name);
+            position: absolute;
+            bottom: 0.5rem;
+            left: 0.5rem;
+            right: 0.5rem;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            text-align: center;
+        }
+
+        /* Achievements */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+        }
+
+        .achievement-item {
+            text-align: center;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            transition: var(--transition);
+        }
+
+        .achievement-item.unlocked {
+            background: var(--primary);
+            color: white;
+        }
+
+        .achievement-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .achievement-desc {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
         /* ===== BLOCKED SCREEN ===== */
         .blocked-screen {
             background: var(--bg-primary);
@@ -915,20 +1377,40 @@
             animation-delay: -2s;
         }
 
-        .particle:nth-child(4) {
-            width: 18px;
-            height: 18px;
-            top: 80%;
-            left: 30%;
-            animation-delay: -3s;
+        /* ===== ACHIEVEMENT POPUP ===== */
+        .achievement-popup {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            animation: slideInRight 0.5s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            max-width: 300px;
         }
 
-        .particle:nth-child(5) {
-            width: 22px;
-            height: 22px;
-            top: 20%;
-            left: 70%;
-            animation-delay: -4s;
+        .achievement-popup .achievement-icon {
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        .achievement-popup-content {
+            flex: 1;
+        }
+
+        .achievement-popup h4 {
+            margin-bottom: 0.25rem;
+        }
+
+        .achievement-popup p {
+            font-size: 0.875rem;
+            opacity: 0.9;
         }
 
         /* ===== ANIMATIONS ===== */
@@ -956,6 +1438,17 @@
             to {
                 opacity: 1;
                 transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
             }
         }
 
@@ -1067,6 +1560,11 @@
             }
         }
 
+        @keyframes wave {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
         /* ===== RESPONSIVE DESIGN ===== */
         @media (max-width: 768px) {
             .auth-container {
@@ -1093,6 +1591,11 @@
             .input-wrapper {
                 padding: 0.625rem;
             }
+            
+            .sidebar {
+                max-width: 100%;
+                right: -100%;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1115,6 +1618,14 @@
             
             .modal-content {
                 margin: 1rem;
+            }
+            
+            .avatar-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .background-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -1190,32 +1701,63 @@
             border-top: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* Message Reactions */
-        .message-reactions {
-            display: flex;
-            gap: 0.25rem;
-            margin-top: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .reaction {
-            background: var(--bg-secondary);
+        /* Search Results */
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-surface);
             border: 1px solid var(--border-light);
-            border-radius: 12px;
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
+            border-radius: var(--radius-lg);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .search-result-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-light);
             cursor: pointer;
-            transition: var(--transition-fast);
+            transition: var(--transition);
         }
 
-        .reaction:hover {
-            background: var(--primary);
-            color: white;
+        .search-result-item:hover {
+            background: var(--bg-secondary);
         }
 
-        .reaction.active {
-            background: var(--primary);
-            color: white;
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Reaction Picker */
+        .reaction-picker {
+            position: absolute;
+            bottom: 100%;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 0.5rem;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            z-index: 100;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .reaction-option {
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            font-size: 1.25rem;
+        }
+
+        .reaction-option:hover {
+            background: var(--bg-secondary);
+            transform: scale(1.2);
         }
     </style>
 </head>
@@ -1252,22 +1794,64 @@
                 <p class="auth-subtitle">Join your school community</p>
             </div>
 
-            <div class="auth-form">
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Login</button>
+                <button class="auth-tab" data-tab="register">Register</button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form">
                 <div class="input-group">
-                    <label for="nameInput">Your Name</label>
-                    <input type="text" id="nameInput" placeholder="Enter your display name" maxlength="20" class="glow-input">
-                    <div class="input-helper">This name will be visible to everyone</div>
+                    <label for="loginUsername">Username</label>
+                    <input type="text" id="loginUsername" placeholder="Enter your username" class="glow-input">
                 </div>
 
-                <div id="adminPasswordGroup" class="input-group hidden">
-                    <label for="adminPassword">Admin Password</label>
-                    <input type="password" id="adminPassword" placeholder="Enter admin password" class="glow-input">
-                    <div class="input-helper">Administrator access required</div>
+                <div class="input-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" class="glow-input">
                 </div>
 
-                <button id="continueBtn" class="btn-primary magnetic-btn">
+                <button id="loginBtn" class="btn-primary magnetic-btn">
                     <span class="btn-content">
-                        <span class="btn-text">Continue to Chat</span>
+                        <span class="btn-text">Login to Chat</span>
+                        <span class="btn-arrow">→</span>
+                    </span>
+                    <div class="btn-shine"></div>
+                </button>
+            </div>
+
+            <!-- Register Form -->
+            <div id="registerForm" class="auth-form hidden">
+                <div class="input-group">
+                    <label for="regUsername">Username</label>
+                    <input type="text" id="regUsername" placeholder="Choose a username" class="glow-input">
+                    <div class="input-helper">This will be your unique identifier</div>
+                </div>
+
+                <div class="input-group">
+                    <label for="regName">Full Name</label>
+                    <input type="text" id="regName" placeholder="Enter your full name" class="glow-input">
+                </div>
+
+                <div class="input-group">
+                    <label for="regPassword">Password</label>
+                    <input type="password" id="regPassword" placeholder="Create a password" class="glow-input">
+                    <div class="input-helper">Minimum 6 characters</div>
+                </div>
+
+                <div class="input-group">
+                    <label for="regEmail">Email (Optional)</label>
+                    <input type="email" id="regEmail" placeholder="Enter your email" class="glow-input">
+                </div>
+
+                <div class="input-group">
+                    <label for="regPhone">Phone (Optional)</label>
+                    <input type="tel" id="regPhone" placeholder="Enter your phone number" class="glow-input">
+                </div>
+
+                <button id="registerBtn" class="btn-primary magnetic-btn">
+                    <span class="btn-content">
+                        <span class="btn-text">Create Account</span>
                         <span class="btn-arrow">→</span>
                     </span>
                     <div class="btn-shine"></div>
@@ -1281,7 +1865,7 @@
                 </div>
                 <div class="feature">
                     <div class="feature-icon">⚡</div>
-                    <div class="feature-text">Real-time</div>
+                    <div class="feature-text">Real-time Chat</div>
                 </div>
                 <div class="feature">
                     <div class="feature-icon">🎯</div>
@@ -1308,7 +1892,21 @@
                 </div>
             </div>
             <div class="header-right">
-                <button id="themeToggle" class="icon-btn theme-toggle">
+                <button id="searchBtn" class="icon-btn" title="Search">
+                    <span>🔍</span>
+                </button>
+                <button id="usersBtn" class="icon-btn" title="Online Users">
+                    <span>👥</span>
+                    <span id="usersBadge" class="notification-badge hidden">0</span>
+                </button>
+                <button id="notificationsBtn" class="icon-btn" title="Notifications">
+                    <span>🔔</span>
+                    <span id="notificationsBadge" class="notification-badge hidden">0</span>
+                </button>
+                <button id="profileBtn" class="icon-btn" title="My Profile">
+                    <span id="userAvatar">👤</span>
+                </button>
+                <button id="themeToggle" class="icon-btn theme-toggle" title="Toggle Theme">
                     <span class="theme-icon">🌙</span>
                 </button>
                 <div id="adminBadge" class="admin-badge hidden">
@@ -1338,6 +1936,17 @@
             </div>
         </div>
 
+        <!-- Voice Recorder -->
+        <div id="voiceRecorder" class="voice-recorder hidden">
+            <button id="recordBtn" class="record-btn">
+                <span>🎤</span>
+            </button>
+            <div class="recording-wave"></div>
+            <div class="recording-timer">00:00</div>
+            <button id="cancelRecording" class="btn-secondary">Cancel</button>
+            <button id="sendRecording" class="btn-primary hidden">Send</button>
+        </div>
+
         <!-- Chat Input -->
         <div class="chat-input-container">
             <div class="input-wrapper">
@@ -1349,25 +1958,64 @@
                         maxlength="500"
                         class="message-textarea"
                     ></textarea>
-                    <button id="sendBtn" class="send-btn magnetic-btn">
-                        <span class="send-icon">🚀</span>
-                        <div class="send-shine"></div>
-                    </button>
+                    <div class="input-actions">
+                        <button id="voiceBtn" class="action-btn" title="Voice Message">
+                            <span>🎤</span>
+                        </button>
+                        <button id="fileBtn" class="action-btn" title="Attach File">
+                            <span>📎</span>
+                        </button>
+                        <button id="emojiBtn" class="action-btn" title="Add Emoji">
+                            <span>😊</span>
+                        </button>
+                        <button id="sendBtn" class="send-btn magnetic-btn">
+                            <span class="send-icon">🚀</span>
+                            <div class="send-shine"></div>
+                        </button>
+                    </div>
                 </div>
-                <div class="input-actions">
+                <div class="input-actions" style="justify-content: space-between; margin-top: 0.5rem;">
                     <span id="charCount" class="char-count">0/500</span>
+                    <span id="userPoints" class="char-count" style="color: var(--accent);">100 points</span>
                 </div>
             </div>
+        </div>
+
+        <!-- Search Results -->
+        <div id="searchResults" class="search-results hidden"></div>
+
+        <!-- Reaction Picker -->
+        <div id="reactionPicker" class="reaction-picker hidden">
+            <div class="reaction-option" data-emoji="👍">👍</div>
+            <div class="reaction-option" data-emoji="❤️">❤️</div>
+            <div class="reaction-option" data-emoji="😂">😂</div>
+            <div class="reaction-option" data-emoji="😮">😮</div>
+            <div class="reaction-option" data-emoji="😢">😢</div>
+            <div class="reaction-option" data-emoji="🔥">🔥</div>
+            <div class="reaction-option" data-emoji="⭐">⭐</div>
+            <div class="reaction-option" data-emoji="🎉">🎉</div>
         </div>
 
         <!-- Message Context Menu -->
         <div id="contextMenu" class="context-menu hidden">
             <div class="menu-content">
-                <button class="menu-item delete-item" data-action="delete">
+                <button class="menu-item" data-action="reply">
+                    <span class="menu-icon">↩️</span>
+                    <span class="menu-text">Reply</span>
+                </button>
+                <button class="menu-item" data-action="react">
+                    <span class="menu-icon">😊</span>
+                    <span class="menu-text">Add Reaction</span>
+                </button>
+                <button class="menu-item report-item" data-action="report">
+                    <span class="menu-icon">🚨</span>
+                    <span class="menu-text">Report</span>
+                </button>
+                <button class="menu-item delete-item hidden" data-action="delete">
                     <span class="menu-icon">🗑️</span>
                     <span class="menu-text">Delete Message</span>
                 </button>
-                <button class="menu-item block-item" data-action="block">
+                <button class="menu-item delete-item hidden" data-action="block">
                     <span class="menu-icon">🚫</span>
                     <span class="menu-text">Block User</span>
                 </button>
@@ -1377,21 +2025,121 @@
                 </button>
             </div>
         </div>
+    </div>
 
-        <!-- Admin Password Modal -->
-        <div id="adminModal" class="modal-overlay hidden">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Admin Authentication</h3>
-                    <button class="modal-close">&times;</button>
+    <!-- Sidebars -->
+    <div id="usersSidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h3>Online Users</h3>
+            <button class="modal-close close-sidebar">✕</button>
+        </div>
+        <div class="sidebar-content">
+            <div id="usersList" class="users-list">
+                <!-- Users will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <div id="profileSidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h3>My Profile</h3>
+            <button class="modal-close close-sidebar">✕</button>
+        </div>
+        <div class="sidebar-content">
+            <div class="profile-section">
+                <h4>Avatar</h4>
+                <div class="avatar-grid">
+                    <div class="avatar-option" data-avatar="👤">👤</div>
+                    <div class="avatar-option" data-avatar="😊">😊</div>
+                    <div class="avatar-option" data-avatar="😎">😎</div>
+                    <div class="avatar-option" data-avatar="🤖">🤖</div>
+                    <div class="avatar-option" data-avatar="🐱">🐱</div>
+                    <div class="avatar-option" data-avatar="🦊">🦊</div>
+                    <div class="avatar-option" data-avatar="🌟">🌟</div>
+                    <div class="avatar-option" data-avatar="🎮">🎮</div>
                 </div>
-                <div class="modal-body">
-                    <p>Administrator access requires password verification.</p>
-                    <input type="password" id="modalAdminPassword" placeholder="Enter admin password" class="modal-input">
-                    <div class="modal-actions">
-                        <button id="confirmAdmin" class="btn-primary">Verify & Continue</button>
-                        <button id="cancelAdmin" class="btn-secondary">Cancel</button>
-                    </div>
+            </div>
+
+            <div class="profile-section">
+                <h4>Profile Info</h4>
+                <div class="input-group">
+                    <label for="profileName">Display Name</label>
+                    <input type="text" id="profileName" class="modal-input" placeholder="Your display name">
+                </div>
+                <div class="input-group">
+                    <label for="profileStatus">Status</label>
+                    <input type="text" id="profileStatus" class="modal-input" placeholder="What's on your mind?">
+                </div>
+                <div class="input-group">
+                    <label for="profileBio">Bio</label>
+                    <textarea id="profileBio" class="modal-input" placeholder="Tell us about yourself" rows="3"></textarea>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h4>Chat Background</h4>
+                <div class="background-grid">
+                    <div class="background-option bg-gradient-cosmic" data-bg="cosmic" data-name="Cosmic"></div>
+                    <div class="background-option bg-gradient-sunset" data-bg="sunset" data-name="Sunset"></div>
+                    <div class="background-option bg-gradient-ocean" data-bg="ocean" data-name="Ocean"></div>
+                    <div class="background-option bg-gradient-forest" data-bg="forest" data-name="Forest"></div>
+                    <div class="background-option bg-pattern-dots" data-bg="dots" data-name="Dots"></div>
+                    <div class="background-option" style="background: var(--bg-primary);" data-bg="default" data-name="Default"></div>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h4>Privacy Settings</h4>
+                <div class="input-group">
+                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox" id="readReceipts" checked>
+                        <span>Read Receipts</span>
+                    </label>
+                </div>
+                <div class="input-group">
+                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox" id="onlineStatus" checked>
+                        <span>Show Online Status</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button id="saveProfile" class="btn-primary">Save Changes</button>
+                <button class="btn-secondary close-sidebar">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="achievementsSidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h3>My Achievements</h3>
+            <button class="modal-close close-sidebar">✕</button>
+        </div>
+        <div class="sidebar-content">
+            <div class="profile-section">
+                <h4>Points: <span id="totalPoints">100</span></h4>
+            </div>
+            <div class="achievements-grid">
+                <div class="achievement-item unlocked">
+                    <div class="achievement-icon">🎉</div>
+                    <div class="achievement-name">Welcome!</div>
+                    <div class="achievement-desc">Join ChatSphere</div>
+                </div>
+                <div class="achievement-item">
+                    <div class="achievement-icon">💬</div>
+                    <div class="achievement-name">Chatty</div>
+                    <div class="achievement-desc">Send 10 messages</div>
+                </div>
+                <div class="achievement-item">
+                    <div class="achievement-icon">🔊</div>
+                    <div class="achievement-name">Voice Star</div>
+                    <div class="achievement-desc">Send 5 voice messages</div>
+                </div>
+                <div class="achievement-item">
+                    <div class="achievement-icon">📊</div>
+                    <div class="achievement-name">Social Butterfly</div>
+                    <div class="achievement-desc">Send 100 messages</div>
                 </div>
             </div>
         </div>
@@ -1417,8 +2165,6 @@
         <div class="particle"></div>
         <div class="particle"></div>
         <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
     </div>
 
     <!-- Connection Status -->
@@ -1426,28 +2172,48 @@
         🔴 Connecting...
     </div>
 
+    <!-- Achievement Popup -->
+    <div id="achievementPopup" class="achievement-popup hidden">
+        <div class="achievement-icon">🎉</div>
+        <div class="achievement-popup-content">
+            <h4>Achievement Unlocked!</h4>
+            <p>You earned the <strong>Welcome</strong> achievement</p>
+        </div>
+    </div>
+
+    <!-- File Input (Hidden) -->
+    <input type="file" id="fileInput" accept="image/*,audio/*,video/*,.pdf,.doc,.docx" style="display: none;">
+
     <script>
         // ===== CONFIGURATION =====
         const CONFIG = {
             BACKEND_URL: window.location.origin,
             REFRESH_INTERVAL: 2000,
             TYPING_TIMEOUT: 3000,
-            MAX_MESSAGE_LENGTH: 500
+            MAX_MESSAGE_LENGTH: 500,
+            VOICE_RECORD_MAX: 30000 // 30 seconds
         };
 
         // ===== STATE MANAGEMENT =====
         let state = {
             currentUser: null,
-            isAdmin: false,
+            token: localStorage.getItem('chatSphere_token'),
             messages: [],
+            users: [],
             typingUsers: new Set(),
             isTyping: false,
             lastTypingTime: 0,
             selectedMessage: null,
+            replyingTo: null,
             theme: localStorage.getItem('theme') || 'dark',
+            customBackground: localStorage.getItem('customBackground') || 'default',
             autoScroll: true,
             connectionStatus: 'disconnected',
-            onlineUsers: new Set()
+            isRecording: false,
+            recordingStart: 0,
+            recordingTimer: null,
+            mediaRecorder: null,
+            audioChunks: []
         };
 
         // ===== DOM ELEMENTS =====
@@ -1459,10 +2225,18 @@
             blockedScreen: document.getElementById('blockedScreen'),
             
             // Auth Screen
-            nameInput: document.getElementById('nameInput'),
-            adminPasswordGroup: document.getElementById('adminPasswordGroup'),
-            adminPassword: document.getElementById('adminPassword'),
-            continueBtn: document.getElementById('continueBtn'),
+            authTabs: document.querySelectorAll('.auth-tab'),
+            loginForm: document.getElementById('loginForm'),
+            registerForm: document.getElementById('registerForm'),
+            loginUsername: document.getElementById('loginUsername'),
+            loginPassword: document.getElementById('loginPassword'),
+            loginBtn: document.getElementById('loginBtn'),
+            regUsername: document.getElementById('regUsername'),
+            regName: document.getElementById('regName'),
+            regPassword: document.getElementById('regPassword'),
+            regEmail: document.getElementById('regEmail'),
+            regPhone: document.getElementById('regPhone'),
+            registerBtn: document.getElementById('registerBtn'),
             
             // Chat Screen
             backBtn: document.getElementById('backBtn'),
@@ -1475,16 +2249,57 @@
             messageInput: document.getElementById('messageInput'),
             sendBtn: document.getElementById('sendBtn'),
             charCount: document.getElementById('charCount'),
+            userPoints: document.getElementById('userPoints'),
+            userAvatar: document.getElementById('userAvatar'),
             
-            // Modals & Menus
+            // Voice Recording
+            voiceRecorder: document.getElementById('voiceRecorder'),
+            recordBtn: document.getElementById('recordBtn'),
+            cancelRecording: document.getElementById('cancelRecording'),
+            sendRecording: document.getElementById('sendRecording'),
+            voiceBtn: document.getElementById('voiceBtn'),
+            
+            // File Upload
+            fileBtn: document.getElementById('fileBtn'),
+            fileInput: document.getElementById('fileInput'),
+            
+            // Sidebars
+            usersSidebar: document.getElementById('usersSidebar'),
+            profileSidebar: document.getElementById('profileSidebar'),
+            achievementsSidebar: document.getElementById('achievementsSidebar'),
+            usersBtn: document.getElementById('usersBtn'),
+            profileBtn: document.getElementById('profileBtn'),
+            searchBtn: document.getElementById('searchBtn'),
+            notificationsBtn: document.getElementById('notificationsBtn'),
+            usersList: document.getElementById('usersList'),
+            closeSidebars: document.querySelectorAll('.close-sidebar'),
+            
+            // Profile
+            profileName: document.getElementById('profileName'),
+            profileStatus: document.getElementById('profileStatus'),
+            profileBio: document.getElementById('profileBio'),
+            saveProfile: document.getElementById('saveProfile'),
+            readReceipts: document.getElementById('readReceipts'),
+            onlineStatusToggle: document.getElementById('onlineStatus'),
+            totalPoints: document.getElementById('totalPoints'),
+            
+            // Search
+            searchResults: document.getElementById('searchResults'),
+            
+            // Reactions
+            reactionPicker: document.getElementById('reactionPicker'),
+            emojiBtn: document.getElementById('emojiBtn'),
+            
+            // Context Menu
             contextMenu: document.getElementById('contextMenu'),
-            adminModal: document.getElementById('adminModal'),
-            modalAdminPassword: document.getElementById('modalAdminPassword'),
-            confirmAdmin: document.getElementById('confirmAdmin'),
-            cancelAdmin: document.getElementById('cancelAdmin'),
             
             // Status
-            connectionStatus: document.getElementById('connectionStatus')
+            connectionStatus: document.getElementById('connectionStatus'),
+            usersBadge: document.getElementById('usersBadge'),
+            notificationsBadge: document.getElementById('notificationsBadge'),
+            
+            // Achievement
+            achievementPopup: document.getElementById('achievementPopup')
         };
 
         // ===== INITIALIZATION =====
@@ -1492,33 +2307,52 @@
             await initializeApp();
             setupEventListeners();
             applyTheme(state.theme);
+            applyBackground(state.customBackground);
             setupMobileKeyboard();
+            checkPWA();
         });
 
         async function initializeApp() {
+            // Check if user is already logged in
+            if (state.token) {
+                try {
+                    const user = await getCurrentUser();
+                    if (user) {
+                        state.currentUser = user;
+                        showChatScreen();
+                        return;
+                    }
+                } catch (error) {
+                    console.log('Token invalid, showing login screen');
+                    localStorage.removeItem('chatSphere_token');
+                }
+            }
+
             // Simulate loading
             await new Promise(resolve => setTimeout(resolve, 2000));
             
-            // Check server health
-            await checkServerHealth();
-            
             hideLoadingScreen();
             showAuthScreen();
-            
-            // Check for existing session
-            const savedName = localStorage.getItem('chatSphere_userName');
-            if (savedName) {
-                elements.nameInput.value = savedName;
-                handleNameInput();
-            }
         }
 
         function setupEventListeners() {
             // Auth Screen
-            elements.nameInput.addEventListener('input', handleNameInput);
-            elements.continueBtn.addEventListener('click', handleAuth);
-            elements.nameInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') handleAuth();
+            elements.authTabs.forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    const tabName = e.target.dataset.tab;
+                    switchAuthTab(tabName);
+                });
+            });
+
+            elements.loginBtn.addEventListener('click', handleLogin);
+            elements.registerBtn.addEventListener('click', handleRegister);
+            
+            elements.loginPassword.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleLogin();
+            });
+            
+            elements.regPassword.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleRegister();
             });
             
             // Chat Screen
@@ -1530,16 +2364,36 @@
             elements.messageInput.addEventListener('blur', handleInputBlur);
             elements.sendBtn.addEventListener('click', sendMessage);
             
+            // Voice Recording
+            elements.voiceBtn.addEventListener('click', toggleVoiceRecording);
+            elements.recordBtn.addEventListener('click', toggleRecording);
+            elements.cancelRecording.addEventListener('click', cancelRecording);
+            elements.sendRecording.addEventListener('click', sendRecording);
+            
+            // File Upload
+            elements.fileBtn.addEventListener('click', () => elements.fileInput.click());
+            elements.fileInput.addEventListener('change', handleFileUpload);
+            
+            // Sidebars
+            elements.usersBtn.addEventListener('click', () => toggleSidebar('usersSidebar'));
+            elements.profileBtn.addEventListener('click', () => toggleSidebar('profileSidebar'));
+            elements.closeSidebars.forEach(btn => {
+                btn.addEventListener('click', closeAllSidebars);
+            });
+            
+            // Profile
+            elements.saveProfile.addEventListener('click', saveProfileSettings);
+            
+            // Search
+            elements.searchBtn.addEventListener('click', showSearchModal);
+            
+            // Reactions
+            elements.emojiBtn.addEventListener('click', toggleReactionPicker);
+            elements.reactionPicker.addEventListener('click', handleReactionSelect);
+            
             // Context Menu
             document.addEventListener('click', hideContextMenu);
             elements.contextMenu.addEventListener('click', handleContextMenuAction);
-            
-            // Admin Modal
-            elements.confirmAdmin.addEventListener('click', handleAdminAuth);
-            elements.cancelAdmin.addEventListener('click', hideAdminModal);
-            elements.modalAdminPassword.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') handleAdminAuth();
-            });
             
             // Window events
             window.addEventListener('resize', handleWindowResize);
@@ -1550,6 +2404,12 @@
             
             // Touch events for mobile
             setupTouchEvents();
+            
+            // Avatar selection
+            setupAvatarSelection();
+            
+            // Background selection
+            setupBackgroundSelection();
         }
 
         function setupMobileKeyboard() {
@@ -1569,7 +2429,7 @@
             let touchTimer;
             document.addEventListener('touchstart', (e) => {
                 const messageElement = e.target.closest('.message');
-                if (messageElement && state.isAdmin) {
+                if (messageElement) {
                     touchTimer = setTimeout(() => {
                         const touch = e.touches[0];
                         showContextMenu(
@@ -1591,6 +2451,173 @@
             });
         }
 
+        function setupAvatarSelection() {
+            document.querySelectorAll('.avatar-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.avatar-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+        }
+
+        function setupBackgroundSelection() {
+            document.querySelectorAll('.background-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const bgClass = this.dataset.bg;
+                    applyBackground(bgClass);
+                    state.customBackground = bgClass;
+                    localStorage.setItem('customBackground', bgClass);
+                    
+                    document.querySelectorAll('.background-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+        }
+
+        function checkPWA() {
+            // Check if app is installed
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                console.log('Running as PWA');
+            }
+            
+            // Register service worker for PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => console.log('SW registered'))
+                    .catch(error => console.log('SW registration failed'));
+            }
+        }
+
+        // ===== AUTHENTICATION =====
+        function switchAuthTab(tabName) {
+            elements.authTabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (tabName === 'login') {
+                elements.loginForm.classList.remove('hidden');
+                elements.registerForm.classList.add('hidden');
+            } else {
+                elements.loginForm.classList.add('hidden');
+                elements.registerForm.classList.remove('hidden');
+            }
+        }
+
+        async function handleLogin() {
+            const username = elements.loginUsername.value.trim();
+            const password = elements.loginPassword.value;
+            
+            if (!username || !password) {
+                showError('Please enter username and password');
+                return;
+            }
+            
+            await loginUser(username, password);
+        }
+
+        async function handleRegister() {
+            const username = elements.regUsername.value.trim();
+            const name = elements.regName.value.trim();
+            const password = elements.regPassword.value;
+            const email = elements.regEmail.value.trim();
+            const phone = elements.regPhone.value.trim();
+            
+            if (!username || !name || !password) {
+                showError('Please fill in all required fields');
+                return;
+            }
+            
+            if (username.length < 3) {
+                showError('Username must be at least 3 characters');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showError('Password must be at least 6 characters');
+                return;
+            }
+            
+            await registerUser({ username, name, password, email, phone });
+        }
+
+        async function loginUser(username, password) {
+            try {
+                showLoadingState(elements.loginBtn, 'Logging in...');
+                
+                const response = await fetch(`${CONFIG.BACKEND_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    state.token = data.token;
+                    state.currentUser = data.user;
+                    localStorage.setItem('chatSphere_token', data.token);
+                    
+                    showSuccess('Login successful!');
+                    showChatScreen();
+                    
+                } else {
+                    showError(data.error || 'Login failed');
+                }
+                
+            } catch (error) {
+                showError('Network error. Please check your connection.');
+            } finally {
+                hideLoadingState(elements.loginBtn, 'Login to Chat');
+            }
+        }
+
+        async function registerUser(userData) {
+            try {
+                showLoadingState(elements.registerBtn, 'Creating account...');
+                
+                const response = await fetch(`${CONFIG.BACKEND_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    state.token = data.token;
+                    state.currentUser = data.user;
+                    localStorage.setItem('chatSphere_token', data.token);
+                    
+                    showSuccess('Registration successful!');
+                    showChatScreen();
+                    showAchievement('Welcome!', 'You joined ChatSphere');
+                    
+                } else {
+                    showError(data.error || 'Registration failed');
+                }
+                
+            } catch (error) {
+                showError('Network error. Please check your connection.');
+            } finally {
+                hideLoadingState(elements.registerBtn, 'Create Account');
+            }
+        }
+
+        async function getCurrentUser() {
+            try {
+                const response = await fetch(`${CONFIG.BACKEND_URL}/auth/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${state.token}`
+                    }
+                });
+                
+                const data = await response.json();
+                return data.success ? data.user : null;
+                
+            } catch (error) {
+                return null;
+            }
+        }
+
         // ===== SCREEN MANAGEMENT =====
         function hideLoadingScreen() {
             elements.loadingScreen.style.opacity = '0';
@@ -1607,7 +2634,11 @@
             elements.authScreen.classList.add('hidden');
             elements.chatScreen.classList.remove('hidden');
             elements.messageInput.focus();
+            
+            // Update UI with user data
+            updateUserUI();
             startMessagePolling();
+            loadUsers();
         }
 
         function showBlockedScreen() {
@@ -1617,111 +2648,46 @@
             elements.blockedScreen.classList.remove('hidden');
         }
 
-        // ===== AUTHENTICATION =====
-        function handleNameInput() {
-            const name = elements.nameInput.value.trim();
-            const isAdmin = name.toLowerCase() === 'admin';
-            
-            elements.adminPasswordGroup.classList.toggle('hidden', !isAdmin);
-            
-            // Add magnetic effect to button when name is entered
-            if (name.length > 0) {
-                elements.continueBtn.classList.add('magnetic-active');
-            } else {
-                elements.continueBtn.classList.remove('magnetic-active');
-            }
-        }
-
-        async function handleAuth() {
-            const name = elements.nameInput.value.trim();
-            const password = elements.adminPassword.value;
-            
-            if (!name) {
-                showError('Please enter your name');
-                return;
-            }
-            
-            if (name.toLowerCase() === 'admin' && !password) {
-                showAdminModal();
-                return;
-            }
-            
-            await authenticateUser(name, password);
-        }
-
-        async function authenticateUser(name, password) {
-            try {
-                showLoadingState();
+        function updateUserUI() {
+            if (state.currentUser) {
+                elements.userAvatar.textContent = state.currentUser.avatar;
+                elements.userPoints.textContent = `${state.currentUser.points} points`;
                 
-                const response = await fetch(`${CONFIG.BACKEND_URL}/auth`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, password })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    state.currentUser = name;
-                    state.isAdmin = data.isAdmin || false;
-                    
-                    localStorage.setItem('chatSphere_userName', name);
-                    
-                    if (state.isAdmin) {
-                        elements.adminBadge.classList.remove('hidden');
-                        showSuccess('Admin access granted!');
-                    }
-                    
-                    showChatScreen();
-                    loadMessages();
-                    
-                } else {
-                    if (data.error === 'ADMIN_PASSWORD_REQUIRED') {
-                        showAdminModal();
-                    } else if (data.error === 'INVALID_ADMIN_PASSWORD') {
-                        showError('Invalid admin password');
-                        elements.adminPassword.value = '';
-                        elements.adminPassword.focus();
-                    } else if (data.error === 'ACCESS_DENIED') {
-                        showBlockedScreen();
-                    } else {
-                        showError(data.error || 'Authentication failed');
-                    }
+                if (state.currentUser.role === 'admin') {
+                    elements.adminBadge.classList.remove('hidden');
                 }
                 
-            } catch (error) {
-                showError('Network error. Please check your connection.');
-            } finally {
-                hideLoadingState();
+                // Update profile form
+                elements.profileName.value = state.currentUser.name;
+                elements.profileStatus.value = state.currentUser.status || '';
+                elements.profileBio.value = state.currentUser.bio || '';
+                elements.totalPoints.textContent = state.currentUser.points;
+                
+                // Set selected avatar
+                document.querySelectorAll('.avatar-option').forEach(option => {
+                    if (option.dataset.avatar === state.currentUser.avatar) {
+                        option.classList.add('selected');
+                    }
+                });
+                
+                // Set selected background
+                document.querySelectorAll('.background-option').forEach(option => {
+                    if (option.dataset.bg === state.customBackground) {
+                        option.classList.add('selected');
+                    }
+                });
             }
-        }
-
-        function showAdminModal() {
-            elements.adminModal.classList.remove('hidden');
-            elements.modalAdminPassword.focus();
-        }
-
-        function hideAdminModal() {
-            elements.adminModal.classList.add('hidden');
-            elements.modalAdminPassword.value = '';
-        }
-
-        async function handleAdminAuth() {
-            const password = elements.modalAdminPassword.value.trim();
-            
-            if (!password) {
-                showError('Please enter admin password');
-                return;
-            }
-            
-            await authenticateUser('admin', password);
-            hideAdminModal();
         }
 
         // ===== MESSAGE MANAGEMENT =====
         async function loadMessages() {
             try {
-                const response = await fetch(`${CONFIG.BACKEND_URL}/messages`);
+                const response = await fetch(`${CONFIG.BACKEND_URL}/messages`, {
+                    headers: {
+                        'Authorization': `Bearer ${state.token}`
+                    }
+                });
+                
                 const data = await response.json();
                 
                 if (data.success) {
@@ -1733,6 +2699,7 @@
                             scrollToBottom();
                         }
                     }
+                    updateConnectionStatus('connected');
                 }
             } catch (error) {
                 console.error('Failed to load messages:', error);
@@ -1747,11 +2714,12 @@
             // Add context menu listeners
             document.querySelectorAll('.message').forEach(messageEl => {
                 messageEl.addEventListener('contextmenu', handleMessageRightClick);
+                messageEl.addEventListener('click', handleMessageClick);
             });
         }
 
         function createMessageElement(message) {
-            const isSent = message.name === state.currentUser;
+            const isSent = message.userId === state.currentUser.id;
             const isSystem = message.type === 'system';
             const isAdminMessage = message.type === 'admin';
             
@@ -1762,23 +2730,64 @@
                 minute: '2-digit' 
             });
             
-            // Add reactions if any
-            const reactionsHTML = message.reactions ? renderReactions(message.reactions) : '';
+            // Reply section
+            const replyHTML = message.replyTo ? `
+                <div class="message-reply">
+                    <span class="reply-sender">${message.replyTo.name}:</span>
+                    ${escapeHtml(message.replyTo.message)}
+                </div>
+            ` : '';
+            
+            // File or voice message
+            let mediaHTML = '';
+            if (message.type === 'file' && message.file) {
+                mediaHTML = `
+                    <div class="file-message">
+                        <div class="file-icon">📎</div>
+                        <div class="file-info">
+                            <div class="file-name">${message.file.name}</div>
+                            <div class="file-size">${formatFileSize(message.file.size)}</div>
+                        </div>
+                    </div>
+                `;
+            } else if (message.type === 'voice' && message.file) {
+                mediaHTML = `
+                    <div class="voice-message">
+                        <div class="voice-icon">🎵</div>
+                        <div class="voice-info">
+                            <div class="voice-duration">Voice message</div>
+                            <div class="voice-player">
+                                <button class="play-btn" onclick="playVoiceMessage('${message.id}')">▶️</button>
+                                <div class="voice-waveform"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Reactions
+            const reactionsHTML = message.reactions ? renderReactions(message.reactions, message.id) : '';
             
             return `
-                <div class="message message-${messageClass}" data-message-id="${message.id}" data-sender="${message.name}">
+                <div class="message message-${messageClass}" data-message-id="${message.id}" data-sender="${message.username}">
                     <div class="message-bubble">
                         ${!isSent && !isSystem ? `
                             <div class="message-header">
-                                <span class="message-sender">${escapeHtml(message.name)}</span>
+                                <span class="message-sender">
+                                    <span class="user-avatar">${message.avatar}</span>
+                                    ${escapeHtml(message.name)}
+                                </span>
                                 <span class="message-time">${time}</span>
                             </div>
                         ` : ''}
+                        
+                        ${replyHTML}
                         
                         <div class="message-content">
                             ${escapeHtml(message.message)}
                         </div>
                         
+                        ${mediaHTML}
                         ${reactionsHTML}
                         
                         ${isSent || isSystem ? `
@@ -1791,15 +2800,15 @@
             `;
         }
 
-        function renderReactions(reactions) {
+        function renderReactions(reactions, messageId) {
             const reactionEntries = Object.entries(reactions);
             if (reactionEntries.length === 0) return '';
             
             return `
                 <div class="message-reactions">
                     ${reactionEntries.map(([emoji, count]) => `
-                        <span class="reaction" data-emoji="${emoji}">
-                            ${emoji} ${count}
+                        <span class="reaction" data-emoji="${emoji}" data-message-id="${messageId}">
+                            ${emoji} <span class="reaction-count">${count}</span>
                         </span>
                     `).join('')}
                 </div>
@@ -1820,33 +2829,51 @@
             }
             
             try {
+                const messageData = {
+                    message: message,
+                    type: 'text'
+                };
+                
+                if (state.replyingTo) {
+                    messageData.replyTo = {
+                        id: state.replyingTo.id,
+                        name: state.replyingTo.name,
+                        message: state.replyingTo.message
+                    };
+                }
+                
                 // Optimistic update
                 const tempMessage = {
                     id: 'temp-' + Date.now(),
-                    name: state.currentUser,
+                    userId: state.currentUser.id,
+                    username: state.currentUser.username,
+                    name: state.currentUser.name,
+                    avatar: state.currentUser.avatar,
                     message: message,
+                    type: 'text',
                     timestamp: new Date().toISOString(),
-                    type: state.isAdmin ? 'admin' : 'user'
+                    replyTo: state.replyingTo,
+                    reactions: {}
                 };
                 
                 state.messages.push(tempMessage);
                 renderMessages();
                 scrollToBottom();
                 
-                // Clear input
+                // Clear input and reset reply
                 elements.messageInput.value = '';
                 updateCharCount();
+                resetReply();
                 resetTyping();
                 
                 // Send to server
-                const response = await fetch(`${CONFIG.BACKEND_URL}/send-message`, {
+                const response = await fetch(`${CONFIG.BACKEND_URL}/messages`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: state.currentUser,
-                        message: message,
-                        isAdmin: state.isAdmin
-                    })
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${state.token}`
+                    },
+                    body: JSON.stringify(messageData)
                 });
                 
                 const data = await response.json();
@@ -1869,7 +2896,190 @@
             }
         }
 
-        // ===== TYPING INDICATORS =====
+        // ===== VOICE MESSAGES =====
+        async function toggleVoiceRecording() {
+            if (state.isRecording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+        }
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                state.mediaRecorder = new MediaRecorder(stream);
+                state.audioChunks = [];
+                
+                state.mediaRecorder.ondataavailable = (event) => {
+                    state.audioChunks.push(event.data);
+                };
+                
+                state.mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(state.audioChunks, { type: 'audio/wav' });
+                    // Here you would upload the audio blob to your server
+                    console.log('Audio recorded:', audioBlob);
+                };
+                
+                state.mediaRecorder.start();
+                state.isRecording = true;
+                state.recordingStart = Date.now();
+                
+                elements.voiceRecorder.classList.remove('hidden');
+                elements.recordBtn.classList.add('recording');
+                
+                startRecordingTimer();
+                
+            } catch (error) {
+                showError('Microphone access denied or not available');
+            }
+        }
+
+        function stopRecording() {
+            if (state.mediaRecorder && state.isRecording) {
+                state.mediaRecorder.stop();
+                state.isRecording = false;
+                clearInterval(state.recordingTimer);
+                
+                elements.recordBtn.classList.remove('recording');
+                elements.sendRecording.classList.remove('hidden');
+                
+                // Stop all audio tracks
+                state.mediaRecorder.stream.getTracks().forEach(track => track.stop());
+            }
+        }
+
+        function cancelRecording() {
+            stopRecording();
+            elements.voiceRecorder.classList.add('hidden');
+            elements.sendRecording.classList.add('hidden');
+        }
+
+        async function sendRecording() {
+            // This would upload the audio file to your server
+            // For now, we'll just send a text message indicating voice
+            try {
+                const response = await fetch(`${CONFIG.BACKEND_URL}/messages`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${state.token}`
+                    },
+                    body: JSON.stringify({
+                        message: 'Voice message',
+                        type: 'voice'
+                    })
+                });
+                
+                if (response.ok) {
+                    elements.voiceRecorder.classList.add('hidden');
+                    loadMessages();
+                }
+            } catch (error) {
+                showError('Failed to send voice message');
+            }
+        }
+
+        function startRecordingTimer() {
+            state.recordingTimer = setInterval(() => {
+                const elapsed = Date.now() - state.recordingStart;
+                const seconds = Math.floor(elapsed / 1000);
+                const display = `00:${seconds.toString().padStart(2, '0')}`;
+                elements.voiceRecorder.querySelector('.recording-timer').textContent = display;
+                
+                if (seconds >= 30) { // 30 second limit
+                    stopRecording();
+                }
+            }, 1000);
+        }
+
+        // ===== FILE UPLOAD =====
+        async function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // Check file size (10MB limit)
+            if (file.size > 10 * 1024 * 1024) {
+                showError('File size must be less than 10MB');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('type', getFileType(file.type));
+            
+            try {
+                const response = await fetch(`${CONFIG.BACKEND_URL}/upload`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${state.token}`
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showSuccess('File uploaded successfully');
+                    loadMessages();
+                } else {
+                    showError(data.error || 'Upload failed');
+                }
+            } catch (error) {
+                showError('Network error during upload');
+            }
+            
+            // Reset file input
+            event.target.value = '';
+        }
+
+        function getFileType(mimeType) {
+            if (mimeType.startsWith('audio/')) return 'voice';
+            if (mimeType.startsWith('image/')) return 'image';
+            return 'file';
+        }
+
+        // ===== REACTIONS =====
+        function toggleReactionPicker() {
+            elements.reactionPicker.classList.toggle('hidden');
+        }
+
+        async function handleReactionSelect(event) {
+            const emoji = event.target.dataset.emoji;
+            if (!emoji) return;
+            
+            // For now, we'll just add reaction to the last message
+            // In a real app, you'd select which message to react to
+            const lastMessage = state.messages[state.messages.length - 1];
+            if (lastMessage) {
+                await addReaction(lastMessage.id, emoji);
+            }
+            
+            elements.reactionPicker.classList.add('hidden');
+        }
+
+        async function addReaction(messageId, emoji) {
+            try {
+                const response = await fetch(`${CONFIG.BACKEND_URL}/messages/${messageId}/reactions`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${state.token}`
+                    },
+                    body: JSON.stringify({ emoji })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    loadMessages(); // Reload to get updated reactions
+                }
+            } catch (error) {
+                showError('Failed to add reaction');
+            }
+        }
+
+        // ===== UI INTERACTIONS =====
         function handleMessageInput() {
             updateCharCount();
             
@@ -1891,28 +3101,6 @@
             // In a real app, you'd send typing stop to server
         }
 
-        function updateTypingIndicator() {
-            // This would be populated from server in real implementation
-            if (state.typingUsers.size > 0) {
-                const typingList = Array.from(state.typingUsers).slice(0, 3);
-                let typingText = '';
-                
-                if (typingList.length === 1) {
-                    typingText = `${typingList[0]} is typing`;
-                } else if (typingList.length === 2) {
-                    typingText = `${typingList[0]} and ${typingList[1]} are typing`;
-                } else {
-                    typingText = `${typingList[0]}, ${typingList[1]} and others are typing`;
-                }
-                
-                elements.typingIndicator.querySelector('.typing-text').textContent = typingText;
-                elements.typingIndicator.classList.remove('hidden');
-            } else {
-                elements.typingIndicator.classList.add('hidden');
-            }
-        }
-
-        // ===== UI INTERACTIONS =====
         function handleMessageKeydown(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -1958,25 +3146,102 @@
             elements.messagesList.scrollTop = elements.messagesList.scrollHeight;
         }
 
-        // ===== CONTEXT MENU (ADMIN) =====
-        function handleMessageRightClick(e) {
-            if (!state.isAdmin) return;
+        // ===== SIDEBARS =====
+        function toggleSidebar(sidebarId) {
+            closeAllSidebars();
+            document.getElementById(sidebarId).classList.add('open');
+        }
+
+        function closeAllSidebars() {
+            document.querySelectorAll('.sidebar').forEach(sidebar => {
+                sidebar.classList.remove('open');
+            });
+        }
+
+        // ===== PROFILE SETTINGS =====
+        async function saveProfileSettings() {
+            const name = elements.profileName.value.trim();
+            const status = elements.profileStatus.value.trim();
+            const bio = elements.profileBio.value.trim();
+            const avatar = document.querySelector('.avatar-option.selected')?.dataset.avatar || '👤';
             
-            e.preventDefault();
-            const messageElement = e.target.closest('.message');
-            if (messageElement) {
-                showContextMenu(
-                    messageElement.dataset.messageId,
-                    e.clientX,
-                    e.clientY
-                );
+            const settings = {
+                readReceipts: elements.readReceipts.checked,
+                onlineStatus: elements.onlineStatusToggle.checked
+            };
+            
+            try {
+                const response = await fetch(`${CONFIG.BACKEND_URL}/users/profile`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${state.token}`
+                    },
+                    body: JSON.stringify({
+                        name,
+                        avatar,
+                        status,
+                        bio,
+                        settings
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    state.currentUser = data.user;
+                    updateUserUI();
+                    showSuccess('Profile updated successfully');
+                    closeAllSidebars();
+                } else {
+                    showError('Failed to update profile');
+                }
+            } catch (error) {
+                showError('Network error');
             }
         }
 
-        function showContextMenu(messageId, x, y) {
-            if (!state.isAdmin) return;
+        // ===== CONTEXT MENU =====
+        function handleMessageRightClick(e) {
+            e.preventDefault();
+            const messageElement = e.target.closest('.message');
+            if (messageElement) {
+                const messageId = messageElement.dataset.messageId;
+                const isOwnMessage = messageElement.dataset.sender === state.currentUser.username;
+                const isAdmin = state.currentUser.role === 'admin';
+                
+                showContextMenu(messageId, e.clientX, e.clientY, isOwnMessage, isAdmin);
+            }
+        }
+
+        function handleMessageClick(event) {
+            // Handle reaction clicks
+            if (event.target.closest('.reaction')) {
+                const reaction = event.target.closest('.reaction');
+                const messageId = reaction.dataset.messageId;
+                const emoji = reaction.dataset.emoji;
+                addReaction(messageId, emoji);
+                return;
+            }
             
+            // Handle reply clicks
+            if (event.target.closest('.message-reply')) {
+                const messageElement = event.target.closest('.message');
+                const messageId = messageElement.dataset.messageId;
+                const message = state.messages.find(m => m.id === messageId);
+                if (message) {
+                    setReplyTo(message);
+                }
+                return;
+            }
+        }
+
+        function showContextMenu(messageId, x, y, isOwnMessage = false, isAdmin = false) {
             state.selectedMessage = messageId;
+            
+            // Show/hide admin options
+            document.querySelector('[data-action="delete"]').classList.toggle('hidden', !isOwnMessage && !isAdmin);
+            document.querySelector('[data-action="block"]').classList.toggle('hidden', !isAdmin);
             
             elements.contextMenu.style.left = x + 'px';
             elements.contextMenu.style.top = y + 'px';
@@ -2005,12 +3270,24 @@
             
             hideContextMenu();
             
+            const message = state.messages.find(m => m.id === state.selectedMessage);
+            if (!message) return;
+            
             switch (action) {
+                case 'reply':
+                    setReplyTo(message);
+                    break;
+                case 'react':
+                    showReactionPicker(message);
+                    break;
+                case 'report':
+                    await reportMessage(message);
+                    break;
                 case 'delete':
-                    await deleteMessage(state.selectedMessage);
+                    await deleteMessage(message);
                     break;
                 case 'block':
-                    await blockUser(state.selectedMessage);
+                    await blockUser(message);
                     break;
                 case 'cancel':
                     // Do nothing
@@ -2018,15 +3295,71 @@
             }
         }
 
-        async function deleteMessage(messageId) {
-            if (!state.isAdmin) return;
+        function setReplyTo(message) {
+            state.replyingTo = {
+                id: message.id,
+                name: message.name,
+                message: message.message
+            };
+            
+            elements.messageInput.placeholder = `Replying to ${message.name}...`;
+            elements.messageInput.focus();
+        }
+
+        function resetReply() {
+            state.replyingTo = null;
+            elements.messageInput.placeholder = 'Type your message...';
+        }
+
+        function showReactionPicker(message) {
+            // Position reaction picker near the message
+            const messageElement = document.querySelector(`[data-message-id="${message.id}"]`);
+            if (messageElement) {
+                const rect = messageElement.getBoundingClientRect();
+                elements.reactionPicker.style.left = rect.left + 'px';
+                elements.reactionPicker.style.bottom = (window.innerHeight - rect.top) + 'px';
+                elements.reactionPicker.classList.remove('hidden');
+            }
+        }
+
+        async function reportMessage(message) {
+            const reason = prompt('Please enter the reason for reporting this message:');
+            if (!reason) return;
             
             try {
-                const response = await fetch(`${CONFIG.BACKEND_URL}/message/${messageId}`, {
+                const response = await fetch(`${CONFIG.BACKEND_URL}/messages/${message.id}/report`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${state.token}`
+                    },
+                    body: JSON.stringify({ reason })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showSuccess('Message reported successfully');
+                } else {
+                    showError('Failed to report message');
+                }
+            } catch (error) {
+                showError('Network error');
+            }
+        }
+
+        async function deleteMessage(message) {
+            if (!confirm('Are you sure you want to delete this message?')) return;
+            
+            try {
+                const response = await fetch(`${CONFIG.BACKEND_URL}/messages/${message.id}`, {
                     method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${state.token}`
+                    },
                     body: JSON.stringify({
-                        adminPassword: 'admin123' // This should be the actual admin password
+                        adminPassword: 'admin123' // This should be proper admin auth
                     })
                 });
                 
@@ -2043,26 +3376,20 @@
             }
         }
 
-        async function blockUser(messageId) {
-            if (!state.isAdmin) return;
-            
-            const message = state.messages.find(m => m.id === messageId);
-            if (!message) {
-                showError('Message not found');
-                return;
-            }
-            
-            // Get user IP from server or use message data
-            const userIP = message.ip || 'unknown';
+        async function blockUser(message) {
+            if (!confirm(`Are you sure you want to block ${message.name}?`)) return;
             
             try {
                 const response = await fetch(`${CONFIG.BACKEND_URL}/block-user`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${state.token}`
+                    },
                     body: JSON.stringify({
-                        ip: userIP,
+                        ip: message.ip || 'unknown',
                         reason: 'Admin action',
-                        adminPassword: 'admin123' // This should be the actual admin password
+                        adminPassword: 'admin123'
                     })
                 });
                 
@@ -2078,7 +3405,7 @@
             }
         }
 
-        // ===== THEME MANAGEMENT =====
+        // ===== THEME & BACKGROUND =====
         function toggleTheme() {
             const newTheme = state.theme === 'dark' ? 'light' : 'dark';
             applyTheme(newTheme);
@@ -2094,21 +3421,122 @@
             document.documentElement.setAttribute('data-theme', theme);
         }
 
-        // ===== CONNECTION MANAGEMENT =====
-        async function checkServerHealth() {
-            try {
-                const response = await fetch(`${CONFIG.BACKEND_URL}/health`);
-                if (response.ok) {
-                    updateConnectionStatus('connected');
-                    return true;
-                }
-            } catch (error) {
-                console.error('Health check failed:', error);
-            }
-            updateConnectionStatus('disconnected');
-            return false;
+        function applyBackground(bgClass) {
+            document.documentElement.className = '';
+            document.documentElement.classList.add(bgClass);
         }
 
+        // ===== USERS MANAGEMENT =====
+        async function loadUsers() {
+            try {
+                const response = await fetch(`${CONFIG.BACKEND_URL}/users`, {
+                    headers: {
+                        'Authorization': `Bearer ${state.token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    state.users = data.users;
+                    renderUsers();
+                    updateUsersBadge();
+                }
+            } catch (error) {
+                console.error('Failed to load users:', error);
+            }
+        }
+
+        function renderUsers() {
+            const usersHTML = state.users.map(user => `
+                <div class="user-item">
+                    <div class="user-avatar">${user.avatar}</div>
+                    <div class="user-info">
+                        <div class="user-name">${escapeHtml(user.name)}</div>
+                        <div class="user-status">${user.status || 'Online'}</div>
+                    </div>
+                    <div class="user-points">${user.points}</div>
+                </div>
+            `).join('');
+            
+            elements.usersList.innerHTML = usersHTML;
+        }
+
+        function updateUsersBadge() {
+            const onlineCount = state.users.length;
+            elements.usersBadge.textContent = onlineCount;
+            elements.usersBadge.classList.toggle('hidden', onlineCount === 0);
+        }
+
+        // ===== SEARCH =====
+        function showSearchModal() {
+            const query = prompt('Enter search terms:');
+            if (query) {
+                searchMessages(query);
+            }
+        }
+
+        async function searchMessages(query) {
+            try {
+                const response = await fetch(`${CONFIG.BACKEND_URL}/search?query=${encodeURIComponent(query)}`, {
+                    headers: {
+                        'Authorization': `Bearer ${state.token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showSearchResults(data.results, query);
+                }
+            } catch (error) {
+                showError('Search failed');
+            }
+        }
+
+        function showSearchResults(results, query) {
+            if (results.length === 0) {
+                elements.searchResults.innerHTML = '<div class="search-result-item">No results found</div>';
+            } else {
+                elements.searchResults.innerHTML = results.map(result => `
+                    <div class="search-result-item" data-message-id="${result.id}">
+                        <strong>${result.name}:</strong> ${highlightText(result.message, query)}
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">
+                            ${new Date(result.timestamp).toLocaleString()}
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            elements.searchResults.classList.remove('hidden');
+            
+            // Add click handlers
+            elements.searchResults.querySelectorAll('.search-result-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const messageId = this.dataset.messageId;
+                    scrollToMessage(messageId);
+                    elements.searchResults.classList.add('hidden');
+                });
+            });
+        }
+
+        function highlightText(text, query) {
+            const regex = new RegExp(`(${query})`, 'gi');
+            return text.replace(regex, '<mark>$1</mark>');
+        }
+
+        function scrollToMessage(messageId) {
+            const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+            if (messageElement) {
+                messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                messageElement.style.animation = 'pulse 2s';
+                setTimeout(() => {
+                    messageElement.style.animation = '';
+                }, 2000);
+            }
+        }
+
+        // ===== CONNECTION MANAGEMENT =====
         function updateConnectionStatus(status) {
             state.connectionStatus = status;
             const statusEl = elements.connectionStatus;
@@ -2117,7 +3545,7 @@
             if (status === 'connected') {
                 statusEl.textContent = '🟢 Connected';
                 statusEl.className = 'connection-status connected';
-                onlineStatus.textContent = 'Connected • Live';
+                onlineStatus.textContent = `Connected • ${state.users.length} online`;
             } else {
                 statusEl.textContent = '🔴 Disconnected';
                 statusEl.className = 'connection-status disconnected';
@@ -2129,29 +3557,48 @@
         function startMessagePolling() {
             // Initial load
             loadMessages();
-            checkServerHealth();
+            loadUsers();
             
             // Set up interval
             setInterval(() => {
                 loadMessages();
-                checkServerHealth();
+                loadUsers();
             }, CONFIG.REFRESH_INTERVAL);
+        }
+
+        // ===== ACHIEVEMENTS =====
+        function showAchievement(name, description) {
+            elements.achievementPopup.querySelector('h4').textContent = name;
+            elements.achievementPopup.querySelector('p').innerHTML = `You earned the <strong>${name}</strong> achievement`;
+            elements.achievementPopup.classList.remove('hidden');
+            
+            setTimeout(() => {
+                elements.achievementPopup.classList.add('hidden');
+            }, 5000);
         }
 
         // ===== EVENT HANDLERS =====
         function handleBack() {
             if (confirm('Are you sure you want to leave the chat?')) {
                 state.currentUser = null;
-                state.isAdmin = false;
+                state.token = null;
                 state.messages = [];
+                state.users = [];
+                
+                localStorage.removeItem('chatSphere_token');
                 
                 elements.chatScreen.classList.add('hidden');
                 elements.authScreen.classList.remove('hidden');
                 elements.adminBadge.classList.add('hidden');
                 
-                // Reset admin password field
-                elements.adminPassword.value = '';
-                elements.adminPasswordGroup.classList.add('hidden');
+                // Reset forms
+                elements.loginUsername.value = '';
+                elements.loginPassword.value = '';
+                elements.regUsername.value = '';
+                elements.regName.value = '';
+                elements.regPassword.value = '';
+                elements.regEmail.value = '';
+                elements.regPhone.value = '';
             }
         }
 
@@ -2177,14 +3624,22 @@
             return div.innerHTML;
         }
 
-        function showLoadingState() {
-            elements.continueBtn.disabled = true;
-            elements.continueBtn.querySelector('.btn-text').textContent = 'Connecting...';
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
 
-        function hideLoadingState() {
-            elements.continueBtn.disabled = false;
-            elements.continueBtn.querySelector('.btn-text').textContent = 'Continue to Chat';
+        function showLoadingState(button, text) {
+            button.disabled = true;
+            button.querySelector('.btn-text').textContent = text;
+        }
+
+        function hideLoadingState(button, text) {
+            button.disabled = false;
+            button.querySelector('.btn-text').textContent = text;
         }
 
         function showError(message) {
@@ -2245,6 +3700,12 @@
             }, 2000);
         }
 
+        // Voice message playback (simplified)
+        function playVoiceMessage(messageId) {
+            // In a real app, this would play the actual audio file
+            showSuccess('Playing voice message...');
+        }
+
         // Add CSS for animations
         const style = document.createElement('style');
         style.textContent = `
@@ -2273,10 +3734,30 @@
             .magnetic-active {
                 animation: pulse 2s infinite;
             }
+            
+            mark {
+                background: var(--accent);
+                color: white;
+                padding: 0.1rem 0.2rem;
+                border-radius: 0.2rem;
+            }
         `;
         document.head.appendChild(style);
 
-        console.log('🚀 ChatSphere Frontend Loaded Successfully!');
+        // Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(console.error);
+        }
+
+        // Before install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Show install button
+        });
+
+        console.log('🚀 ChatSphere 3.0 Frontend Loaded Successfully!');
     </script>
 </body>
 </html>
