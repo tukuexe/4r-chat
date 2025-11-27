@@ -351,7 +351,7 @@ app.post('/auth/register', async (req, res) => {
             password: hashedPassword,
             role: 'user',
             avatar: '👤',
-            status: 'Hey there! I'm using ChatSphere',
+            status: 'Hey there! I\\'m using ChatSphere',
             bio: '',
             points: 100,
             achievements: ['welcome'],
