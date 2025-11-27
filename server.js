@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3000;
 // ==================== CONFIGURATION ====================
 const CONFIG = {
     // MongoDB Atlas
-    MONGODB_URI: "mongodb+srv://chatshpere:tukubhuyan123@cluster0.i386mxq.mongodb.net/?retryWrites=true&w=majority",
+    MONGODB_URI: "mongodb+srv://schoolchat_user:tukubhuyan123@cluster0.i386mxq.mongodb.net/?retryWrites=true&w=majority",
     
     // Telegram Bot
     BOT_TOKEN: "8170582086:AAEb5LIj1flmUeeBlYQZaNm81lxufzA3Zyo",
