@@ -24,7 +24,7 @@ const CONFIG = {
     
     // Admin Credentials (Will be created automatically)
     ADMIN_USERNAME: "admin",
-    ADMIN_EMAIL: "admin@chatshpere.com",
+    ADMIN_EMAIL: "sourovb768@gmail.com",
     ADMIN_PASSWORD: "admin123",
     
     // App Settings
@@ -351,7 +351,7 @@ app.post('/auth/register', async (req, res) => {
             password: hashedPassword,
             role: 'user',
             avatar: '👤',
-            status: 'Hey there! I\\'m using ChatSphere',
+            status: `Hey there! I'm using ChatSphere`,
             bio: '',
             points: 100,
             achievements: ['welcome'],
